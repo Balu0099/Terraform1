@@ -150,11 +150,31 @@ resource "aws_route_table" "my-route-table" {
 }
 resource "aws_route" "my-route" {
   route_table_id         = aws_route_table.my-route-table.id
-  destination_cidr_block = "0.0.0/0"
+  destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.my-gateway.id   
 }
-resource "aws_route" "my-nat-route" {
-  route_table_id         = aws_route_table.my-route-table.id
-  destination_cidr_block = "0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.my-nat-gateway.id
+
+resource "aws_security_group" "My-SG" {
+  name        = "MySecurityGroup"
+  description = "Allow SSH and HTTP traffic"
+  vpc_id      = aws_vpc.my-vpc.id
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Allow SSH from anywhere
+    }
+    ingress {
+    from_port   = 80
+    to_port     = 80    
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Allow HTTP from anywhere
+    }
+    egress {
+    from_port   = 0    
+    to_port     = 0
+    protocol    = "-1" 
+    cidr_blocks = ["0.0.0.0/0"] # Allow SSH from anywhere
+    }    
+
 }
