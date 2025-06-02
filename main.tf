@@ -148,8 +148,13 @@ resource "aws_route_table" "my-route-table" {
     Name = "my-route-table"
   }
 }
-
 resource "aws_route" "my-route" {
   route_table_id         = aws_route_table.my-route-table.id
-
-  }
+  destination_cidr_block = "0.0.0/0"
+  gateway_id             = aws_internet_gateway.my-gateway.id   
+}
+resource "aws_route" "my-nat-route" {
+  route_table_id         = aws_route_table.my-route-table.id
+  destination_cidr_block = "0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.my-nat-gateway.id
+}
